@@ -1,0 +1,74 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "value": "canadacentral"
+        },
+        "networkInterfaceName": {
+            "value": "vm1394"
+        },
+        "networkSecurityGroupName": {
+            "value": "vm1-nsg"
+        },
+        "networkSecurityGroupRules": {
+            "value": [
+                {
+                    "name": "RDP",
+                    "properties": {
+                        "priority": 300,
+                        "protocol": "TCP",
+                        "access": "Allow",
+                        "direction": "Inbound",
+                        "sourceAddressPrefix": "*",
+                        "sourcePortRange": "*",
+                        "destinationAddressPrefix": "*",
+                        "destinationPortRange": "3389"
+                    }
+                }
+            ]
+        },
+        "subnetName": {
+            "value": "default"
+        },
+        "virtualNetworkId": {
+            "value": "/subscriptions/64b70538-bc40-4492-9c4b-13f8b43e732d/resourceGroups/win-rm/providers/Microsoft.Network/virtualNetworks/win-rm-vnet"
+        },
+        "publicIpAddressName": {
+            "value": "vm1-ip"
+        },
+        "publicIpAddressType": {
+            "value": "Dynamic"
+        },
+        "publicIpAddressSku": {
+            "value": "Basic"
+        },
+        "virtualMachineName": {
+            "value": "vm1"
+        },
+        "virtualMachineComputerName": {
+            "value": "vm1"
+        },
+        "virtualMachineRG": {
+            "value": "win-rm"
+        },
+        "osDiskType": {
+            "value": "Premium_LRS"
+        },
+        "virtualMachineSize": {
+            "value": "Standard_D2s_v3"
+        },
+        "adminUsername": {
+            "value": "AzureUser"
+        },
+        "adminPassword": {
+            "value": null
+        },
+        "diagnosticsStorageAccountName": {
+            "value": "winrmdiag823"
+        },
+        "diagnosticsStorageAccountId": {
+            "value": "/subscriptions/64b70538-bc40-4492-9c4b-13f8b43e732d/resourceGroups/win-rm/providers/Microsoft.Storage/storageAccounts/winrmdiag823"
+        }
+    }
+}
