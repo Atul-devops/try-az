@@ -34,7 +34,7 @@ resource "azurerm_network_security_group" "ansg-01" {
     }
     security_rule {
         name                        = "Inbound-allow-7717"
-        priority                    = 1000
+        priority                    = 1001
         access                      = "Allow"
         direction                   = "Inbound"
         destination_port_range      = 7717
@@ -45,7 +45,7 @@ resource "azurerm_network_security_group" "ansg-01" {
     }
     security_rule {
         name                        = "Outbound-allow-5282"
-        priority                    = 1000
+        priority                    = 1002
         access                      = "Allow"
         direction                   = "Outbound"
         destination_port_range      = 5282
