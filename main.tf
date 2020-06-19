@@ -1,3 +1,9 @@
+provider "azurerm" {
+  # whilst the `version` attribute is optional, we recommend pinning to a given version of the Provider
+  version = "=2.0.0"
+  features {}
+}
+
 #======================================
 #       Azure RESOURCE GRPS
 #======================================
@@ -13,49 +19,6 @@ resource "azurerm_resource_group" "win-rm" {
  
 }
  
-#====================================
-#          NSG
-#===================================
-# Network Security Group with allow RDP rule 
-resource "azurerm_network_security_group" "ansg-01" {
-    name                = "test-nsg"
-    resource_group_name = azurerm_resource_group.win-rm.name
-    location            = azurerm_resource_group.win-rm.location
-    security_rule {
-        name                        = "default-allow-3389"
-        priority                    = 1000
-        access                      = "Allow"
-        direction                   = "Inbound"
-        destination_port_range      = 3389
-        protocol                    = "Tcp"
-        source_port_range           = "*"
-        source_address_prefix       = "*"
-        destination_address_prefix  = "*"
-    }
-    security_rule {
-        name                        = "Inbound-allow-7717"
-        priority                    = 1001
-        access                      = "Allow"
-        direction                   = "Inbound"
-        destination_port_range      = 7717
-        protocol                    = "Tcp"
-        source_port_range           = "*"
-        source_address_prefix       = "*"
-        destination_address_prefix  = "*"
-    }
-    security_rule {
-        name                        = "Outbound-allow-5282"
-        priority                    = 1002
-        access                      = "Allow"
-        direction                   = "Outbound"
-        destination_port_range      = 5282
-        protocol                    = "Tcp"
-        source_port_range           = "*"
-        source_address_prefix       = "*"
-        destination_address_prefix  = "*"
-    }
-}
- 
 #=====================================
 #           NETWORK
 #=====================================
@@ -64,7 +27,7 @@ resource "azurerm_virtual_network" "testnet" {
   name                = "testnet"
   resource_group_name = azurerm_resource_group.win-rm.name
   location            = azurerm_resource_group.win-rm.location
-  address_space       = ["10.1.10.0/24"]
+  address_space       = ["10.0.0.0/16"]
   }
  
  
@@ -73,7 +36,7 @@ resource "azurerm_subnet" "internal" {
   name                 = "lonosubnet"
   resource_group_name  =  azurerm_resource_group.win-rm.name
   virtual_network_name =  azurerm_virtual_network.testnet.name
-  address_prefixes       = ["10.1.10.0/24"]
+  address_prefix       =  var.network-subnet-cidr
   }
  
  
@@ -125,7 +88,6 @@ resource "azurerm_virtual_machine" "win10autoclient" {
     version   = "latest"
   }
  
- 
 #--- Disk Storage Type
  
   storage_os_disk {
@@ -142,7 +104,6 @@ resource "azurerm_virtual_machine" "win10autoclient" {
     create_option   = "Empty"
     }
  
- 
 #--- Define password + hostname ---
   os_profile {
     computer_name   = "Win10"
@@ -151,26 +112,17 @@ resource "azurerm_virtual_machine" "win10autoclient" {
   }
  
 #---
- 
   os_profile_windows_config {
     enable_automatic_upgrades = true
     provision_vm_agent = true
   }
- 
 #-- Windows VM Diagnostics 
- 
 
 #--- VM Tags
- 
   tags = {
     environment = "Dev"
   }
- 
- 
- 
 #--- Post Install Provisioning ---
- 
- 
  
 }
  
