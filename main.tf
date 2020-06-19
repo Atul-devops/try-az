@@ -13,7 +13,26 @@ resource "azurerm_resource_group" "win-rm" {
  
 }
  
- 
+#====================================
+#          NSG
+#===================================
+# Network Security Group with allow RDP rule 
+resource "azurerm_network_security_group" "ansg-01" {
+    name                = "test-nsg"
+    resource_group_name = azurerm_resource_group.win-rm.name
+    location            = azurerm_resource_group.win-rm.location
+    security_rule {
+        name                        = "default-allow-3389"
+        priority                    = 1000
+        access                      = "Allow"
+        direction                   = "Inbound"
+        destination_port_range      = 3389
+        protocol                    = "Tcp"
+        source_port_range           = "*"
+        source_address_prefix       = "*"
+        destination_address_prefix  = "*"
+    }
+}
  
 #=====================================
 #           NETWORK
