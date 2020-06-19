@@ -4,13 +4,14 @@ provider "azurerm" {
   features {}
 }
 
+
 #======================================
 #       Azure RESOURCE GRPS
 #======================================
  
-resource "azurerm_resource_group" "win-rm" {
-  name     = "win-rm"
-  location = "West US"
+resource "azurerm_resource_group" "rg" {
+  name     = var.azurerm_resource_group
+  location = var.location
  
   tags = {
     CreatedBy = "Azad",
@@ -25,16 +26,16 @@ resource "azurerm_resource_group" "win-rm" {
  
 resource "azurerm_virtual_network" "testnet" {
   name                = "testnet"
-  resource_group_name = azurerm_resource_group.win-rm.name
-  location            = azurerm_resource_group.win-rm.location
-  address_space       = ["10.0.0.0/16"]
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  address_space       = var.vnet_address_space
   }
  
  
 #--- Subnet ----
 resource "azurerm_subnet" "internal" {
   name                 = "lonosubnet"
-  resource_group_name  =  azurerm_resource_group.win-rm.name
+  resource_group_name  =  azurerm_resource_group.rg.name
   virtual_network_name =  azurerm_virtual_network.testnet.name
   address_prefix       =  var.network-subnet-cidr
   }
@@ -43,8 +44,8 @@ resource "azurerm_subnet" "internal" {
 #--- Public IP Address ---
 resource "azurerm_public_ip" "WinPublicIP" {
   name                = "WinPublicIP"
-  location            = azurerm_resource_group.win-rm.location
-  resource_group_name = azurerm_resource_group.win-rm.name
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
   allocation_method   = "Static"
   }
  
@@ -52,8 +53,8 @@ resource "azurerm_public_ip" "WinPublicIP" {
 #--- NIC
 resource "azurerm_network_interface" "WindowsNIC" {
   name                = "interface0"
-  location            = azurerm_resource_group.win-rm.location
-  resource_group_name = azurerm_resource_group.win-rm.name
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
  
   ip_configuration {
     name                          = "QADHCP"
@@ -73,8 +74,8 @@ resource "azurerm_network_interface" "WindowsNIC" {
 resource "azurerm_virtual_machine" "win10autoclient" {
  
     name                           = "Win10"
-    location                       = "West US"
-    resource_group_name            = azurerm_resource_group.win-rm.name
+    location                       = var.location
+    resource_group_name            = azurerm_resource_group.rg.name
     network_interface_ids          = [azurerm_network_interface.WindowsNIC.id]
     vm_size                        = var.vmSize
     delete_os_disk_on_termination  = "true"
@@ -87,6 +88,7 @@ resource "azurerm_virtual_machine" "win10autoclient" {
     sku       = var.windowsOSVersion
     version   = "latest"
   }
+ 
  
 #--- Disk Storage Type
  
@@ -104,6 +106,7 @@ resource "azurerm_virtual_machine" "win10autoclient" {
     create_option   = "Empty"
     }
  
+ 
 #--- Define password + hostname ---
   os_profile {
     computer_name   = "Win10"
@@ -112,18 +115,23 @@ resource "azurerm_virtual_machine" "win10autoclient" {
   }
  
 #---
+ 
   os_profile_windows_config {
     enable_automatic_upgrades = true
     provision_vm_agent = true
   }
+ 
 #-- Windows VM Diagnostics 
+ 
 
 #--- VM Tags
+ 
   tags = {
     environment = "Dev"
   }
+  
 #--- Post Install Provisioning ---
- 
+  
 }
  
  
