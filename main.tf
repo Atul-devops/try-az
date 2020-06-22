@@ -110,7 +110,7 @@ resource "azurerm_network_interface" "WindowsNIC" {
     name                          = "QADHCP"
     subnet_id                     = azurerm_subnet.internal.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.WinPublicIP.id
+    public_ip_address_id          = azurerm_public_ip.winpublicip.id
   }
  
 }
