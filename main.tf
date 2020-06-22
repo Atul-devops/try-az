@@ -19,7 +19,48 @@ resource "azurerm_resource_group" "rg" {
   }
  
 }
- 
+#====================================	
+#          NSG	
+#===================================	
+# Network Security Group with allow RDP rule 	
+resource "azurerm_network_security_group" "ansg-01" {	
+    name                = "test-nsg"	
+    resource_group_name = azurerm_resource_group.rg.name	
+    location            = azurerm_resource_group.rg.location	
+    security_rule {	
+        name                        = "default-allow-3389"	
+        priority                    = 1000	
+        access                      = "Allow"	
+        direction                   = "Inbound"	
+        destination_port_range      = 3389	
+        protocol                    = "Tcp"	
+        source_port_range           = "*"	
+        source_address_prefix       = "*"	
+        destination_address_prefix  = "*"	
+    }	
+    security_rule {	
+        name                        = "Inbound-allow-7717"	
+        priority                    = 1001	
+        access                      = "Allow"	
+        direction                   = "Inbound"	
+        destination_port_range      = 7717	
+        protocol                    = "Tcp"	
+        source_port_range           = "*"	
+        source_address_prefix       = "*"	
+        destination_address_prefix  = "*"	
+    }	
+    security_rule {	
+        name                        = "Outbound-allow-5282"	
+        priority                    = 1002	
+        access                      = "Allow"	
+        direction                   = "Outbound"	
+        destination_port_range      = 5282	
+        protocol                    = "Tcp"	
+        source_port_range           = "*"	
+        source_address_prefix       = "*"	
+        destination_address_prefix  = "*"	
+    }	
+} 
 #=====================================
 #           NETWORK
 #=====================================
